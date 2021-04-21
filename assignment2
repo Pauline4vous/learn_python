@@ -1,0 +1,45 @@
+monday = """
+1. Russian/English
+2. Geometry
+3. Russian language
+4. Jurisprudence
+5. Literature(forthnightly)
+
+"""
+
+tuesday = '''
+1. Algebra/English
+2. Russian History
+3. Astronomy
+4. History of Religions
+'''
+
+wednesday = "1. Algebra\n2. IT\n3. Russian language\n4. Social studies"
+
+thursday1 = "1. Geometry in separate groups\n"
+thursday2 = '2. Algebra/English\n'
+thursday3 = "3. English/Russian Language\n"
+thursday4 = "4. Literature\n"
+thursday5 = "5. English(first half of the group)\n"
+
+friday = "{} {} {} {} {}"
+print("Here is the schedule for group 2MES-1")
+day = input("Write the day you want to know the schedule of:")
+if day == "Monday":
+    print(monday)
+elif day == "Tuesday":
+    print(tuesday)
+elif day == "Wednesday":
+    print(wednesday)
+elif day == "Thursday":
+    print(thursday1 + thursday2 + thursday3 + thursday4 + thursday5)
+elif day == "Friday":
+    print(friday.format("1. English\n", "2. Russian language\n", "3. English with separate groups\n", "4. Uzbek language\n", "5. English(second half of the group)"))
+    
+print("What is your score in Maths?")
+score = input()
+if score 100<= and >=75:
+    print("Congratulations!\nYou are in a Maths-oriented group")
+else:
+    print("Maybe you are more into social studies")
+
