@@ -1,0 +1,71 @@
+import math
+def from_cos_to_sin(cosx):
+    y = 1 - cosx**2
+    print(y)
+from_cos_to_sin(0.6)
+from_cos_to_sin(1)
+
+def compare(a, b):
+    if a**b > b**a:
+        print("The value of the first expression is bigger than the second's")
+    if a**b < b**a:
+        print("The value of the first expression is smaller that the second's")
+compare(10, 9)
+
+def convert_knot_to_mph(knot):
+    conv = round(1.1507 * knot, 2)
+    print(conv)
+convert_knot_to_mph(3)
+
+def discriminant(a, b, c):
+    D = b**2 - (4*a*c)
+    print(D)
+discriminant(1, 8, 7)
+
+def velosity(s, t):
+    v = s/t
+    if t==0:
+        print("This equation cannot be solved")
+    if t>0:
+        print(v)
+    if t<0 or s<0:
+        print(-v)
+velosity(3, 2)
+
+def isqrt(a):
+    x=a
+    if True:
+        x1 = (x**2 + a)//(2*x)
+        if x1 >= x:
+            print(x)
+isqrt(4)
+
+def circle(x, y):
+    a = (x**2 + y**2) ** 0.5
+    print(a)
+circle(6, 8)
+
+import math
+def from_cos_to_sin(cosx):
+    y = 1 - cosx**2
+    print(y)
+from_cos_to_sin(0.6)
+from_cos_to_sin(1)
+
+def say_hello(your_name):
+    print(f"Hello, {your_name}")
+say_hello("Polina")
+say_hello("Yas")
+
+def subject(a, b):
+    print("I am good at ",a,",but I experience some problems with ",b)
+subject("math", "literature")
+subject("algebra", "biology")
+
+def score(a):
+    if a >= 75:
+        print("Congratulations!\nYou are in a Maths-oriented group")
+    else:
+        print("Maybe you are more into social studies")
+score(76)
+score(54)
