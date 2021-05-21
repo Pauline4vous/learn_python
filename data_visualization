@@ -1,0 +1,360 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
+from collections import namedtuple
+
+np.random.seed(42)
+
+Student = namedtuple('Student', ['name', 'grade', 'gender'])
+Score = namedtuple('Score', ['score', 'percentile'])
+
+
+test_names = ['Algebra', 'Geometry', 'Geography', 'Chemistry','History']
+
+def attach_ordinal(num):
+    suffixes = {str(i): v
+                for i, v in enumerate(['th', 'st', 'nd', 'rd', 'th',])}
+    v = str(num)
+    # special case early teens
+    if v in {'11', '12', '13'}:
+        return v + 'th'
+    return v + suffixes[v[-1]]
+
+
+def format_score(score, test):
+    unit = test_units[test]
+    if unit:
+        return f'{score}\n{unit}'
+    else:  
+        return score
+
+
+def format_ycursor(y):
+    y = int(y)
+    if y < 0 or y >= len(test_names):
+        return ''
+    else:
+        return test_names[y]
+
+
+def plot_student_results(student, scores, cohort_size):
+    fig, ax1 = plt.subplots(figsize=(9, 7)) 
+    fig.subplots_adjust(left=0.115, right=0.88)
+    fig.canvas.manager.set_window_title('Eldorado K-8 Fitness Chart')
+
+    pos = np.arange(len(test_names))
+
+    rects = ax1.barh(pos, [scores[k].percentile for k in test_names],
+                     align='center',
+                     height=0.5,
+                     tick_label=test_names)
+
+    ax1.set_title(student.name)
+
+    ax1.set_xlim([0, 100])
+    ax1.xaxis.set_major_locator(MaxNLocator(11))
+    ax1.xaxis.grid(True, linestyle='--', which='major',
+                   color='grey', alpha=.25)
+
+    
+    ax1.axvline(50, color='grey', alpha=0.25)
+
+    ax2 = ax1.twinx()
+
+    ax2.set_yticks(pos)
+    
+    ax2.set_ylim(ax1.get_ylim())
+
+    ax2.set_yticklabels([format_score(scores[k].score, k) for k in test_names])
+
+    ax2.set_ylabel('Test Scores')
+
+    xlabel = ('Percentile Ranking Across {grade} Grade {gender}s\n'
+              'Cohort Size: {cohort_size}')
+    ax1.set_xlabel(xlabel.format(grade=attach_ordinal(student.grade),
+                                 gender=student.gender.title(),
+                                 cohort_size=cohort_size))
+
+    rect_labels = []
+    for rect in rects:
+        
+        width = int(rect.get_width())
+
+        rank_str = attach_ordinal(width)
+       
+        if width < 40:
+            xloc = 5
+            clr = 'black'
+            align = 'left'
+        else:
+            xloc = -5
+            clr = 'white'
+            align = 'right'
+
+        yloc = rect.get_y() + rect.get_height() / 2
+        label = ax1.annotate(
+            rank_str, xy=(width, yloc), xytext=(xloc, 0),
+            textcoords="offset points",
+            horizontalalignment=align, verticalalignment='center',
+            color=clr, weight='bold', clip_on=True)
+        rect_labels.append(label)
+
+    ax2.fmt_ydata = format_ycursor
+    return {'fig': fig,
+            'ax': ax1,
+            'ax_right': ax2,
+            'bars': rects,
+            'perc_labels': rect_labels}
+
+
+student = Student('Polina Kolesnikova', 2, 'girl')
+scores = dict(zip(
+    test_names,
+    (Score(v, p) for v, p in
+     zip(['98', '88', '66', '72', '64'],
+         np.round(np.random.uniform(0, 100, len(test_names)), 0)))))
+cohort_size = 52  
+
+arts = plot_student_results(student, scores, cohort_size)
+plt.show()
+#2
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+def circle(x, y):
+    r = ((x-3)**2 + (y-3)**2)**1/2
+    return r
+circle(3, 4)
+
+plt.figure(figsize=(9,9),dpi = 200)
+
+plt.plot(r, 'b^--', label = 'y^2 + x^2')
+
+plt.title("The circle", fontdict = {"fontname": "Times New Roman", "fontsize": 16 })
+plt.xlabel("x values")
+plt.ylabel("y values")
+
+plt.xticks([3, 0, 1, 4])
+plt.yticks([3, 0, 1, 4])
+
+plt.legend()
+
+plt.savefig('circle.png', dpi = 300 )
+
+plt.show()
+#3
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+def snowflake(order, scale=10):
+
+    def snowflake_complex(order):
+        if order == 0:
+            # initial triangle
+            angles = np.array([0, 120, 240]) + 90
+            return scale / np.sqrt(3) * np.exp(np.deg2rad(angles) * 1j)
+        else:
+            ZR = 0.5 - 0.5j * np.sqrt(3) / 3
+
+            p1 = snowflake_complex(order - 1)  # start points
+            p2 = np.roll(p1, shift=-1)  # end points
+            dp = p2 - p1  # connection vectors
+
+            new_points = np.empty(len(p1) * 4, dtype=np.complex128)
+            new_points[::4] = p1
+            new_points[1::4] = p1 + dp / 3
+            new_points[2::4] = p1 + dp * ZR
+            new_points[3::4] = p1 + dp / 3 * 2
+            return new_points
+
+    points = snowflake_complex(order)
+    x, y = points.real, points.imag
+    return x, y
+
+x, y = snowflake(order=5)
+
+plt.figure(figsize=(8, 8))
+plt.axis('equal')
+plt.fill(x, y)
+plt.show()
+
+#4
+fig, axs = plt.subplots(3, 5, figsize=(8, 5), constrained_layout=True,
+                        sharex=True, sharey=True)
+
+fname = get_sample_data('percent_bachelors_degrees_men_usa.csv',
+                        asfileobj=False)
+gender_degree_data = np.genfromtxt(fname, delimiter=',', names=True)
+
+majors = ['Health Professions', 'Public Administration', 'Education',
+          'Psychology', 'Foreign Languages', 'English',
+          'Art and Performance', 'Biology',
+          'Agriculture', 'Business',
+          'Math and Statistics', 'Architecture', 'Physical Sciences',
+          'Computer Science', 'Engineering']
+
+for nn, ax in enumerate(axs.flat):
+    ax.set_xlim(1969.5, 2011.1)
+    column = majors[nn]
+    column_rec_name = column.replace('\n', '_').replace(' ', '_')
+
+    line, = ax.plot('Year', column_rec_name, data=gender_degree_data,
+                    lw=2.5)
+    ax.set_title(column, fontsize='small', loc='left')
+    ax.set_ylim([0, 100])
+    ax.grid()
+fig.supxlabel('Year')
+fig.supylabel('Percent Degrees Awarded To Men')
+
+plt.show()
+
+#5
+fig, ax = plt.subplots()
+
+size = 0.3
+vals = np.array([[60., 32.], [37., 40.], [29., 10.]])
+
+cmap = plt.get_cmap("tab20c")
+outer_colors = cmap(np.arange(3)*4)
+inner_colors = cmap([1, 2, 5, 6, 9, 10])
+
+ax.pie(vals.sum(axis=1), radius=1, colors=outer_colors,
+       wedgeprops=dict(width=size, edgecolor='w'))
+
+ax.pie(vals.flatten(), radius=1-size, colors=inner_colors,
+       wedgeprops=dict(width=size, edgecolor='w'))
+
+ax.set(aspect="equal", title='Creative ways to cut your cake')
+plt.show()
+
+#6
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+names = ['Strongly disagree', 'Disagree',
+                  'Neither agree nor disagree', 'Agree', 'Strongly agree']
+results = {
+    'Question 1': [10, 15, 17, 32, 26],
+    'Question 2': [26, 22, 29, 10, 13],
+    'Question 3': [35, 37, 7, 2, 19],
+    'Question 4': [32, 11, 9, 15, 33],
+    'Question 5': [21, 29, 5, 5, 40],
+    'Question 6': [8, 19, 5, 30, 38]
+}
+
+
+def survey(results, names):
+    labels = list(results.keys())
+    data = np.array(list(results.values()))
+    data_cum = data.cumsum(axis=1)
+    category_colors = plt.get_cmap('RdYlGn')(
+        np.linspace(0.15, 0.85, data.shape[1]))
+
+    fig, ax = plt.subplots(figsize=(9.2, 5))
+    ax.invert_yaxis()
+    ax.xaxis.set_visible(False)
+    ax.set_xlim(0, np.sum(data, axis=1).max())
+
+    for i, (colname, color) in enumerate(zip(names, category_colors)):
+        widths = data[:, i]
+        starts = data_cum[:, i] - widths
+        rects = ax.barh(labels, widths, left=starts, height=0.5,
+                        label=colname, color=color)
+
+        r, g, b, _ = color
+        text_color = 'white' if r * g * b < 0.5 else 'darkgrey'
+        ax.bar_label(rects, label_type='center', color=text_color)
+    ax.legend(ncol=len(category_names), bbox_to_anchor=(0, 1),
+              loc='lower left', fontsize='small')
+
+    return fig, ax
+
+
+survey(results, names)
+plt.show()
+
+#7
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.linspace(0, 10, 500)
+y = np.sin(x)
+
+fig, ax = plt.subplots()
+
+line1, = ax.plot(x, y, label='Persentage of people listening to X-mas songs\n during the year')
+line1.set_dashes([1, 4, 7 , 11])
+
+
+ax.legend()
+plt.show()
+
+#8
+import numpy as np
+import matplotlib.pyplot as plt
+
+plt.title("Amount of different items\n In different families", fontdict = {"fontname": "Times New Roman", "fontsize": 16 })
+np.random.seed(19683801)
+
+N = 17
+theta = np.linspace(0.0, 2 * np.pi, N, endpoint=False)
+radii = 10 * np.random.rand(N)
+width = np.pi / 4 * np.random.rand(N)
+colors = plt.cm.viridis(radii / 10.)
+
+ax = plt.subplot(projection='polar')
+ax.bar(theta, radii, width=width, bottom=0.0, color=colors, alpha=0.5)
+
+plt.show()
+
+#9
+import matplotlib.pyplot as plt
+import numpy as np
+with plt.xkcd():
+
+    fig = plt.figure()
+    ax = fig.add_axes((0.1, 0.2, 0.8, 0.7))
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.set_ylim([-30, 10])
+
+    data = np.ones(100)
+    data[70:] -= np.arange(30)
+
+    ax.annotate(
+        'The day I realised\n I could buy that expensive candy\n Whenever I wanted',
+        xy=(70, 1), arrowprops=dict(arrowstyle='->'), xytext=(15, -10))
+
+    ax.plot(data)
+
+    ax.set_xlabel('year')
+    ax.set_ylabel('my decisions')
+    
+#10
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+x = [0.5, 2, 3, 4]
+y = [2, 4, 6, 8]
+
+plt.figure(figsize=(5,3),dpi = 100)
+
+plt.plot(x,y, 'b^--', label = '2x')
+
+x2 = np.arange(0,4.5, 0.5)
+plt.plot(x2[:6], x2[:6]**2,'r', label = 'X^2')
+plt.plot(x2[5:], x2[5:]**2,'r--')
+
+plt.title("My first chart", fontdict = {"fontname": "Verdana", "fontsize": 16 })
+plt.xlabel("x values")
+plt.ylabel("y values")
+
+plt.xticks([0,1,2,3,4,])
+plt.yticks([0,2,4,6,7,])
+
+plt.legend()
+
+plt.savefig('myfirstgraph.png', dpi = 300 )
+
+plt.show()
